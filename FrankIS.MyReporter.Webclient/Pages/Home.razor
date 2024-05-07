@@ -1,0 +1,38 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Time entries</h1>
+
+@if (_loading)
+{
+    <div>Loading ...</div>
+}
+else
+{
+    <section class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Description</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entry in TimeEntries)
+                {
+                    <tr>
+                        <td>@entry.Id</td>
+                        <td>@entry.Description</td>
+                        <td>@entry.TimeInterval.Start</td>
+                        <td>@entry.TimeInterval.End</td>
+                        <td>@(entry.TimeInterval.End - entry.TimeInterval.Start)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+}
