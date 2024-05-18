@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrankIS.MyReporter.MobileClient.Pages.ConfigPage"
+             xmlns:viewmodel="clr-namespace:FrankIS.MyReporter.MobileClient.ViewModels"
+             xmlns:converters="clr-namespace:FrankIS.MyReporter.MobileClient.Converters"
+             x:DataType="viewmodel:ConfigPageViewModel"
+             Title="Configure"
+             Shell.PresentationMode="ModalAnimated">
+
+    <ContentPage.Resources>
+        <converters:TimePickerTimeOnlyConverter x:Key="timeOnly" />
+    </ContentPage.Resources>
+
+    <VerticalStackLayout VerticalOptions="FillAndExpand">
+        <VerticalStackLayout>
+            <Label Text="Clockify configuration"
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center" />
+
+            <Entry Text="{Binding ClockifyBaseUrl}" />
+            <Entry Text="{Binding ClockifyApiKey}" />
+
+            <Button Text="Load workspaces"
+                    Command="{Binding LoadWorkspacesCommand}"/>
+
+            <ActivityIndicator IsVisible="{Binding LoadingWorkspaces}"
+                               IsRunning="{Binding LoadingWorkspaces}"
+                               IsEnabled="{Binding LoadingWorkspaces}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Margin="0, 40, 0, 0"
+                             IsVisible="{Binding DisplayReportConfig}">
+            <Label Text="Reports configuration"
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center" />
+            <Picker Title="Pick your workspace"
+                    SelectedItem="{Binding SelectedWorkspace}"
+                    ItemsSource="{Binding Workspaces}"
+                    ItemDisplayBinding="{Binding Name}"
+                    IsEnabled="{Binding CanSelectWorkspace}" />
+
+            <Label Text="Work day starts at" />
+            <TimePicker Time="{Binding WorkDayStarts, Converter={StaticResource timeOnly}}" />
+
+            <Entry Placeholder="Workday length (hours)"
+                   Text="{Binding WorkDayLength}"
+                   Keyboard="Numeric" />
+
+            <Label Text="Lunch break starts at" />
+            <TimePicker Time="{Binding LunchBreakStart, Converter={StaticResource timeOnly}}" />
+
+            <Entry Placeholder="Lunch break length (hours)"
+                   Text="{Binding LunchBreakLength}"
+                   Keyboard="Numeric" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout>
+            <Entry Text="{Binding OpenProjectBaseUrl}"
+                   Placeholder="Open Project base url" />
+            <Entry Text="{Binding OpenProjectApiKey}"
+                   Placeholder="Open Project api key" />
+        </VerticalStackLayout>
+        
+        <VerticalStackLayout Margin="0, 40, 0, 0"
+                             VerticalOptions="EndAndExpand">
+            <Button Text="Save settings"
+                    Command="{Binding SaveSettingsCommand}"
+                    IsEnabled="{Binding CanSave}"/>
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

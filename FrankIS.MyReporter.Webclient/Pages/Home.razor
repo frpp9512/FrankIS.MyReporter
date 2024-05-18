@@ -1,38 +1,177 @@
 ﻿@page "/"
 
+@using FrankIS.MyReporter.Management.Helpers
+@using FrankIS.MyReporter.Webclient.Components
+
 <PageTitle>Home</PageTitle>
 
 <h1>Time entries</h1>
 
-@if (_loading)
-{
-    <div>Loading ...</div>
-}
-else
-{
-    <section class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Description</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Duration</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var entry in TimeEntries)
+<FluentGrid Spacing="3"
+            AdaptiveRendering="true"
+            Justify="JustifyContent.Center">
+    <FluentGridItem sm="12" md="4">
+        <DynamicCalendar @bind-SelectedDate="SelectedDate"
+                         SelectedDateRangeChanged="SelectedRangeChanged" />
+    </FluentGridItem>
+    <FluentGridItem sm="12" md="8">
+        @if (_loading)
+        {
+            <div>Loading reported entries ...</div>
+        }
+        else
+        {
+            if (_error)
+            {
+                <div class="">Error while loading the data.</div>
+            }
+            else
+            {
+                @if (DateRange is not (DateOnly from, DateOnly to) selectedRange)
                 {
-                    <tr>
-                        <td>@entry.Id</td>
-                        <td>@entry.Description</td>
-                        <td>@entry.TimeInterval.Start</td>
-                        <td>@entry.TimeInterval.End</td>
-                        <td>@(entry.TimeInterval.End - entry.TimeInterval.Start)</td>
-                    </tr>
+                    <h3>You must select a valid date range</h3>
                 }
-            </tbody>
-        </table>
-    </section>
-}
+                else
+                {
+                    if (GeneratedReport is null || TimeEntries is null || TimeEntries.Count() == 0)
+                    {
+                        if (selectedRange.from == selectedRange.to)
+                        {
+                            <h3>Nothing reported on the day: @selectedRange.from.ToShortDateString()</h3>
+                        }
+                        else
+                        {
+                            <h3>Nothing reported on the date range: @selectedRange.from.ToShortDateString() <span> - </span>@selectedRange.to.ToShortDateString()</h3>
+                        }
+                    }
+                    else
+                    {
+                        <FluentTabs>
+                            <FluentTab Label="Summary" Icon="@(new Icons.Regular.Size24.CardUi())" Id="summary-tab">
+                                <section class="range-info">
+                                    <dl class="stats">
+                                        @if (GeneratedReport.From == GeneratedReport.To)
+                                        {
+                                            <div class="stat-card">
+                                                <dt>Date</dt>
+                                                <dd>@GeneratedReport.From.ToShortDateString()</dd>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="stat-card">
+                                                <dt>From</dt>
+                                                <dd>@GeneratedReport.From.ToShortDateString()</dd>
+                                            </div>
+
+                                            <div class="stat-card">
+                                                <dt>To</dt>
+                                                <dd>@GeneratedReport.To.ToShortDateString()</dd>
+                                            </div>
+                                        }
+
+                                        <div class="stat-card">
+                                            <dt>Entries loaded</dt>
+                                            <dd>@TimeEntries.Count()</dd>
+                                        </div>
+
+                                        <div class="stat-card">
+                                            <dt>Tasks worked</dt>
+                                            <dd>@GeneratedReport.TaskCount</dd>
+                                        </div>
+
+                                        <div class="stat-card">
+                                            <dt>Min. required hours</dt>
+                                            <dd>@GeneratedReport.HoursRequired.ToString("N2") hours</dd>
+                                        </div>
+
+                                        <div class="stat-card">
+                                            <dt>Total hours reported</dt>
+                                            <dd>@GeneratedReport.HoursReported.ToString("N2") hours</dd>
+                                        </div>
+
+                                        <div class="stat-card">
+                                            <dt>Total days worked</dt>
+                                            <dd>@GeneratedReport.TotalDays.ToString("N2") days</dd>
+                                        </div>
+
+                                        <div class="stat-card">
+                                            <dt>Covered</dt>
+                                            <dd>
+                                                <label for="covered-percent">@((GeneratedReport.CoveredPercent * 100).ToString("N2")) %</label>
+                                                <progress id="covered-percent" value="@GeneratedReport.CoveredPercent" max="1">@((GeneratedReport.CoveredPercent * 100).ToString("N2")) %</progress>
+                                            </dd>
+                                        </div>
+
+                                        @if (GeneratedReport.ExtraTime > 0)
+                                        {
+                                            <div class="stat-card">
+                                                <dt>Extra</dt>
+                                                <dd>@GeneratedReport.ExtraTime hours</dd>
+                                            </div>
+                                        }
+                                    </dl>
+                                </section>
+                            </FluentTab>
+                            <FluentTab Label="Tasks" Icon="@(new Icons.Regular.Size24.TaskListLtr())" Id="tasks-tab">
+                                <FluentDataGrid Items="GeneratedReport.TaskReports?.AsQueryable()"
+                                                ShowHover="true"
+                                                ResizableColumns>
+                                    <PropertyColumn Property="@(t => t.TaskDescription)"
+                                                    Title="Task description"
+                                                    Sortable="true" />
+                                    <PropertyColumn Property="@(t => t.TotalReportedTime)"
+                                                    Title="Reported time"
+                                                    Format="N2"
+                                                    Sortable="true" />
+                                    <PropertyColumn Property="@(t => t.TotalDays)"
+                                                    Title="Total days"
+                                                    Format="N2"
+                                                    Sortable="true" />
+                                    <TemplateColumn Title="Entry count"
+                                                    Context="context">
+                                        @(context.Entries?.Count() ?? 0)
+                                    </TemplateColumn>
+                                </FluentDataGrid>
+                            </FluentTab>
+                        </FluentTabs>
+                    }
+                }
+            }
+        }
+    </FluentGridItem>
+    <FluentGridItem sm="12">
+        @if (_loading)
+        {
+
+        }
+        else
+        {
+            @if (!_loading && TimeEntries is not null || TimeEntries?.Count() > 0)
+            {
+                <FluentDataGrid Items="TimeEntries" ShowHover="true">
+                    <PropertyColumn Property="@(e => e.Description)"
+                                    Sortable="true" />
+                    <PropertyColumn Property="@(e => e.TimeInterval.Start)"
+                                    Sortable="true" />
+                    <PropertyColumn Property="@(e => e.TimeInterval.End)"
+                                    Sortable="true" />
+                    <PropertyColumn Property="@(e => e.TimeInterval.Elapsed)"
+                                    Sortable="true" />
+
+                    <TemplateColumn Title="Actions"
+                                    Align="@Align.End"
+                                    Context="context">
+                        <FluentButton aria-label="Delete item"
+                                      IconEnd="@(new Icons.Regular.Size16.Delete())"
+                                      OnClick="async() => await RemoveEntry(context.Id)" />
+                    </TemplateColumn>
+                </FluentDataGrid>
+            }
+            else
+            {
+                <div>Nothing to show</div>
+            }
+        }
+    </FluentGridItem>
+</FluentGrid>

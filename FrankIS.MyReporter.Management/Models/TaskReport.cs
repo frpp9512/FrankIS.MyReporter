@@ -1,13 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using FrankIS.ClockifyManagement.Models;
 
 namespace FrankIS.MyReporter.Management.Models;
 
 public record TaskReport
 {
     public required string TaskDescription { get; set; }
-    public required string TaskName { get; set; }
-    public int DevTime { get; internal set; }
-    public int CodeReviewTime { get; internal set; }
-    public int QATime { get; internal set; }
-    public int? ReportTime { get; set; }
+    public double TotalReportedTime { get; internal set; }
+    public double TotalDays { get; internal set; }
+    public List<ClockifyTimeEntry>? Entries { get; internal set; }
 }

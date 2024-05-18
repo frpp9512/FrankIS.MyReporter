@@ -6,146 +6,163 @@ using FrankIS.ClockifyManagement.Helpers;
 using FrankIS.ClockifyManagement.Models;
 using FrankIS.ClockifyManagement.Services.Json;
 using Microsoft.Extensions.Options;
-using System.ComponentModel;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace FrankIS.ClockifyManagement.Services;
 public class ClockifyManager(IOptions<ClockifyConfiguration> configuration) : IClockifyManager
 {
-    private const string _dateFormat = "yyyy-MM-ddThh:mm:ssZ";
     private readonly ClockifyConfiguration _clockifyConfiguration = configuration.Value;
 
-    public async Task<ClockifyUserInfo?> GetUserInfo()
+    public async Task<ClockifyUserInfo?> GetUserInfoAsync(CancellationToken cancellationToken = default)
     {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var response = await client.GetAsync(EndpointsConstants.GetUserInfoEndpoint());
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<ClockifyUserInfo>();
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        HttpResponseMessage response = await client.GetAsync(EndpointsConstants.GetUserInfoEndpoint(), cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ClockifyUserInfo>(cancellationToken);
     }
 
-    public async Task<ClockifyTimeEntry?> AddNewTimeEntry(string workspaceId, CreateClockifyTimeEntryDto newTimeEntry)
+    public async Task<ClockifyTimeEntry?> AddNewTimeEntryAsync(string workspaceId,
+                                                               CreateClockifyTimeEntryDto newTimeEntry,
+                                                               CancellationToken cancellationToken = default)
     {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetAddNewTimeEntryEndpoint(workspaceId);
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetAddNewTimeEntryEndpoint(workspaceId);
 
-        var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        JsonSerializerOptions jsonOptions = new(JsonSerializerDefaults.Web);
         jsonOptions.Converters.Add(new ClockifyDateConverter());
 
-        var response = await client.PostAsJsonAsync(relativeUrl, newTimeEntry, jsonOptions);
-        response.EnsureSuccessStatusCode();
+        HttpResponseMessage response = await client.PostAsJsonAsync(relativeUrl, newTimeEntry, jsonOptions, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
 
-        var createdEntry = await response.Content.ReadFromJsonAsync<ClockifyTimeEntry>();
+        ClockifyTimeEntry? createdEntry = await response.Content.ReadFromJsonAsync<ClockifyTimeEntry>(cancellationToken);
         return createdEntry;
     }
 
-    public async Task<ClockifyTimeEntry?> AddNewTimeEntry(string workspaceId, string userId, CreateClockifyTimeEntryDto newTimeEntry)
-    {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetAddNewTimeEntryEndpoint(workspaceId, userId);
-        
-        var jsonOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-        jsonOptions.Converters.Add(new ClockifyDateConverter());
-        
-        var response = await client.PostAsJsonAsync(relativeUrl, newTimeEntry, jsonOptions);
-        response.EnsureSuccessStatusCode();
-        
-        var createdEntry = await response.Content.ReadFromJsonAsync<ClockifyTimeEntry>();
-        return createdEntry;
-    }
-
-    public async Task<ClockifyProject?> GetProject(string workspaceId, string projectId)
-    {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetProjectByIdEndpoint(workspaceId, projectId);
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<ClockifyProject>();
-    }
-
-    public async Task<List<ClockifyProject>?> GetProjects(string workspaceId, int page = 1, int pageSize = 50)
-    {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetProjectsEndpoint(workspaceId, page, pageSize);
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<ClockifyProject>>();
-    }
-
-    public async Task<ClockifyTag?> GetTag(string workspaceId, string tagId)
-    {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetTagByIdEndpoint(workspaceId, tagId);
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<ClockifyTag>();
-    }
-
-    public async Task<List<ClockifyTag>?> GetTags(string workspaceId)
-    {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetTagsEndpoint(workspaceId);
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<ClockifyTag>>();
-    }
-
-    public async Task<List<ClockifyTimeEntry>?> GetTimeEntries(string workspaceId,
+    public async Task<ClockifyTimeEntry?> AddNewTimeEntryAsync(string workspaceId,
                                                                string userId,
-                                                               DateTime? start = null,
-                                                               DateTime? end = null,
-                                                               int page = 1,
-                                                               int pageSize = 50)
+                                                               CreateClockifyTimeEntryDto newTimeEntry,
+                                                               CancellationToken cancellationToken = default)
     {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetTimeEntriesEndpoint(workspaceId, userId);
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetAddNewTimeEntryEndpoint(workspaceId, userId);
+
+        JsonSerializerOptions jsonOptions = new(JsonSerializerDefaults.Web);
+        jsonOptions.Converters.Add(new ClockifyDateConverter());
+
+        HttpResponseMessage response = await client.PostAsJsonAsync(relativeUrl, newTimeEntry, jsonOptions, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+
+        ClockifyTimeEntry? createdEntry = await response.Content.ReadFromJsonAsync<ClockifyTimeEntry>(cancellationToken);
+        return createdEntry;
+    }
+
+    public async Task<ClockifyProject?> GetProjectAsync(string workspaceId,
+                                                        string projectId,
+                                                        CancellationToken cancellationToken = default)
+    {
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetProjectByIdEndpoint(workspaceId, projectId);
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ClockifyProject>(cancellationToken);
+    }
+
+    public async Task<List<ClockifyProject>?> GetProjectsAsync(string workspaceId,
+                                                               int page = 1,
+                                                               int pageSize = 50,
+                                                               CancellationToken cancellationToken = default)
+    {
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetProjectsEndpoint(workspaceId, page, pageSize);
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<ClockifyProject>>(cancellationToken);
+    }
+
+    public async Task<ClockifyTag?> GetTagAsync(string workspaceId,
+                                                string tagId,
+                                                CancellationToken cancellationToken = default)
+    {
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetTagByIdEndpoint(workspaceId, tagId);
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ClockifyTag>(cancellationToken);
+    }
+
+    public async Task<List<ClockifyTag>?> GetTagsAsync(string workspaceId,
+                                                       CancellationToken cancellationToken = default)
+    {
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetTagsEndpoint(workspaceId);
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<ClockifyTag>>(cancellationToken);
+    }
+
+    public async Task<List<ClockifyTimeEntry>?> GetTimeEntriesAsync(string workspaceId,
+                                                                    string userId,
+                                                                    DateTime? start = null,
+                                                                    DateTime? end = null,
+                                                                    int page = 1,
+                                                                    int pageSize = 50,
+                                                                    CancellationToken cancellationToken = default)
+    {
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetTimeEntriesEndpoint(workspaceId, userId);
         relativeUrl = $"{relativeUrl}?page={page}&page-size={pageSize}";
         if (start is not null)
         {
-            relativeUrl = $"{relativeUrl}&start={start?.ToString(_dateFormat)}";
+            relativeUrl = $"{relativeUrl}&start={start?.ToString(ClockifyDateConverter.DateFormat)}";
         }
+
         if (end is not null)
         {
-            relativeUrl = $"{relativeUrl}&end={start?.ToString("yyyy-MM-ddThh:mm:ssZ")}";
+            relativeUrl = $"{relativeUrl}&end={end?.ToString(ClockifyDateConverter.DateFormat)}";
         }
 
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<ClockifyTimeEntry>>();
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<ClockifyTimeEntry>>(cancellationToken);
     }
 
-    public async Task<ClockifyTimeEntry?> GetTimeEntry(string workspaceId, string id)
+    public async Task<ClockifyTimeEntry?> GetTimeEntryAsync(string workspaceId,
+                                                            string id,
+                                                            CancellationToken cancellationToken = default)
     {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetTimeEntryEndpoint(workspaceId, id);
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<ClockifyTimeEntry>();
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetTimeEntryEndpoint(workspaceId, id);
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ClockifyTimeEntry>(cancellationToken);
     }
 
-    public async Task DeleteTimeEntry(string workspaceId, string entryId)
+    public async Task DeleteTimeEntryAsync(string workspaceId,
+                                           string entryId,
+                                           CancellationToken cancellationToken = default)
     {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetDeleteTimeEntryEndpoint(workspaceId, entryId);
-        var response = await client.DeleteAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetDeleteTimeEntryEndpoint(workspaceId, entryId);
+        HttpResponseMessage response = await client.DeleteAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
     }
 
-    public async Task<List<ClockifyWorkspace>?> GetWorkspaces()
+    public async Task<List<ClockifyWorkspace>?> GetWorkspacesAsync(CancellationToken cancellationToken = default)
     {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetWorkspacesEndpoint();
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<ClockifyWorkspace>?>();
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetWorkspacesEndpoint();
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<ClockifyWorkspace>>(cancellationToken);
     }
 
-    public async Task<ClockifyWorkspace?> GetWorkspace(string workspaceId)
+    public async Task<ClockifyWorkspace?> GetWorkspaceAsync(string workspaceId, CancellationToken cancellationToken = default)
     {
-        using var client = _clockifyConfiguration.GetApiCallerClient();
-        var relativeUrl = EndpointsConstants.GetWorkspaceByIdEndpoint(workspaceId);
-        var response = await client.GetAsync(relativeUrl);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<ClockifyWorkspace>();
+        using HttpClient client = _clockifyConfiguration.GetApiCallerClient();
+        string relativeUrl = EndpointsConstants.GetWorkspaceByIdEndpoint(workspaceId);
+        HttpResponseMessage response = await client.GetAsync(relativeUrl, cancellationToken);
+        _ = response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ClockifyWorkspace>(cancellationToken);
     }
 }

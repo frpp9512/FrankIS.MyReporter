@@ -2,7 +2,7 @@
 
 public record ClockifyWorkspaceSettings
 {
-    public string? AdminOnlyPages { get; set; }
+    public string[] AdminOnlyPages { get; set; } = [];
     public ClockifyAutomaticLock? AutomaticLock { get; set; }
     public bool CanSeeTimeSheet { get; set; }
     public bool CanSeeTracker { get; set; }

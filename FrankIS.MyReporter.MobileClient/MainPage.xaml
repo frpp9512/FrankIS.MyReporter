@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrankIS.MyReporter.MobileClient.MainPage"
+             xmlns:viewmodel="clr-namespace:FrankIS.MyReporter.MobileClient.ViewModels"
+             xmlns:converters="clr-namespace:FrankIS.MyReporter.MobileClient.Converters"
+             x:DataType="viewmodel:MainPageViewModel"
+             xmlns:reporting="clr-namespace:FrankIS.MyReporter.Management.Models;assembly=FrankIS.MyReporter.Management"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                        Command="{Binding LoadReportCommand}" />
+    </ContentPage.Behaviors>
+
+    <ContentPage.Resources>
+        <converters:DatePickerTimeOnlyConverter x:Key="dateOnly" />
+        <reporting:TaskReport x:Key="taskReport" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="20,5"
+            Spacing="25">
+
+            <Label Text="Reporter"
+                   Style="{StaticResource Headline}"
+                   SemanticProperties.HeadingLevel="Level1" />
+
+            <Grid ColumnDefinitions="*,*">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Start date" />
+                    <DatePicker Date="{Binding From, Converter={StaticResource dateOnly}}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="End date" />
+                    <DatePicker Date="{Binding To, Converter={StaticResource dateOnly}}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <Button Text="Load report"
+                    Command="{Binding LoadReportCommand}"
+                    IsEnabled="{Binding EnableButton}"
+                    IsVisible="{Binding EnableButton}" />
+
+            <ActivityIndicator IsVisible="{Binding LoadingReport}"
+                               IsRunning="{Binding LoadingReport}"
+                               IsEnabled="{Binding LoadingReport}" />
+
+            <VerticalStackLayout IsVisible="{Binding DisplaySummary}">
+                <Label Text="Summary"
+                   Style="{StaticResource SectionHeader}"/>
+                <Grid ColumnDefinitions="*,*"
+                  RowDefinitions="Auto,Auto,Auto,Auto">
+                    <Frame Style="{StaticResource StatCard}"
+                       Grid.Column="0">
+                        <StackLayout VerticalOptions="CenterAndExpand">
+                            <Label Text="Entries loaded" />
+                            <Label Text="{Binding Report.Entries.Count}" Style="{StaticResource StatNumber}" />
+                        </StackLayout>
+                    </Frame>
+                    <Frame Style="{StaticResource StatCard}"
+                       Grid.Column="1">
+                        <StackLayout VerticalOptions="CenterAndExpand">
+                            <Label Text="Entries loaded" />
+                            <Label Text="{Binding Report.TaskCount}" Style="{StaticResource StatNumber}" />
+                        </StackLayout>
+                    </Frame>
+                    <Frame Style="{StaticResource StatCard}"
+                       Grid.Column="0"
+                       Grid.Row="1">
+                        <StackLayout VerticalOptions="CenterAndExpand">
+                            <Label Text="Min. required hours" />
+                            <Label Text="{Binding Report.HoursRequired}" Style="{StaticResource StatNumber}" />
+                        </StackLayout>
+                    </Frame>
+                    <Frame Style="{StaticResource StatCard}"
+                       Grid.Column="1"
+                       Grid.Row="1">
+                        <StackLayout VerticalOptions="CenterAndExpand">
+                            <Label Text="Total hours reported" />
+                            <Label Text="{Binding Report.HoursReported}" Style="{StaticResource StatNumber}" />
+                        </StackLayout>
+                    </Frame>
+                    <Frame Style="{StaticResource StatCard}"
+                       Grid.Column="0"
+                       Grid.Row="2">
+                        <StackLayout VerticalOptions="CenterAndExpand">
+                            <Label Text="Days worked" />
+                            <Label Text="{Binding Report.TotalDays}" Style="{StaticResource StatNumber}" />
+                        </StackLayout>
+                    </Frame>
+                    <Frame Style="{StaticResource StatCard}"
+                       Grid.Column="1"
+                       Grid.Row="2">
+                        <StackLayout VerticalOptions="CenterAndExpand">
+                            <Label Text="Extra hours" />
+                            <Label Text="{Binding Report.ExtraTime}" Style="{StaticResource StatNumber}" />
+                        </StackLayout>
+                    </Frame>
+                    <Frame Style="{StaticResource StatCard}"
+                       Grid.Column="0"
+                       Grid.Row="3"
+                       Grid.ColumnSpan="2">
+                        <StackLayout VerticalOptions="CenterAndExpand">
+                            <Label Text="Covered" />
+                            <Label Text="{Binding Report.CoveredPercent, StringFormat='{0:P1}'}" Style="{StaticResource StatNumber}" />
+                            <ProgressBar Progress="{Binding Report.CoveredPercent}" />
+                        </StackLayout>
+                    </Frame>
+                </Grid>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding DisplayTaskSection}">
+                <Label Text="Task worked"
+                       Style="{StaticResource SectionHeader}"/>
+                <CollectionView ItemsSource="{Binding Report.TaskReports}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame CornerRadius="5"
+                               x:DataType="reporting:TaskReport"
+                               Style="{StaticResource TaskReport}">
+                                <Grid ColumnDefinitions="*,50"
+                                  RowDefinitions="*"
+                                  RowSpacing="10">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding TaskDescription}"
+                                           Style="{StaticResource TaskReportDescription}"/>
+                                        <HorizontalStackLayout Spacing="10">
+                                            <Label Text="{Binding TotalReportedTime, StringFormat='Reported time: {0} hours'}" />
+                                            <Label Text="{Binding TotalDays, StringFormat='Reported days: {0:N1}'}" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="EndAndExpand">
+                                        <Label Text="{Binding Entries.Count}"
+                                           Style="{StaticResource TaskReportEntryCount}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

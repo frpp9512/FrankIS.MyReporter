@@ -3,5 +3,6 @@
 namespace FrankIS.MyReporter.Management.Contracts;
 public interface ITaskReporter
 {
-    Task<string[]> ReportTaskForDateRangeAsync(TaskReport task, string projectId, string[] tags, DateOnly start, DateOnly end);
+    Task<DateRangeReport> GetReportForDateRange(DateOnly from, DateOnly to);
+    Task<string[]> ReportTaskForDateRangeAsync(CreateTaskReport task, string projectId, string[] tags, DateOnly start, DateOnly end);
 }

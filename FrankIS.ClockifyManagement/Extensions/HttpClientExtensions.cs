@@ -1,5 +1,4 @@
 ﻿using FrankIS.ClockifyManagement.Configuration;
-using System.Net.Http.Headers;
 
 namespace FrankIS.ClockifyManagement.Extensions;
 
@@ -9,8 +8,8 @@ internal static class HttpClientExtensions
 
     public static HttpClient GetApiCallerClient(this ClockifyConfiguration configuration)
     {
-        var baseUrl = new Uri(configuration.ClockifyApiBaseUrl);
-        var client = new HttpClient
+        Uri baseUrl = new(configuration.ClockifyApiBaseUrl);
+        HttpClient client = new()
         {
             BaseAddress = baseUrl
         };

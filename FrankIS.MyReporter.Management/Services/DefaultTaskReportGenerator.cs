@@ -3,9 +3,10 @@ using FrankIS.MyReporter.Management.Models;
 using System.Text.RegularExpressions;
 
 namespace FrankIS.MyReporter.Management.Services;
-public partial class TaskReportGenerator : ITaskReportGenerator
+
+public partial class DefaultNewTaskReportGenerator : INewTaskReportGenerator
 {
-    public TaskReport GenerateTaskReport(string taskDescription, int? reportTime = null)
+    public CreateTaskReport GenerateTaskReport(string taskDescription, int? reportTime = null)
     {
         Match taskMatch = TaskNameRegex().Match(taskDescription);
         return !taskMatch.Success

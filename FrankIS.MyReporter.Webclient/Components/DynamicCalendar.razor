@@ -1,0 +1,81 @@
+﻿@using System.Globalization
+
+<article class="dynamic-calendar">
+    <header class="calendar-header">
+        <section class="title-value">
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <div class="title">@Title</div>
+            }
+            @if (SelectedDate is DateOnly selectedDate)
+            {
+                <div class="selected-date" @onclick="GoToSelectedDate">
+                    @if (SelectedDateRange is not (DateOnly from, DateOnly to) range || range.from == range.to)
+                    {
+                        @selectedDate.ToShortDateString()
+                    }
+                    else
+                    {
+                        @range.from.ToShortDateString() <span> - </span> @range.to.ToShortDateString()
+                    }
+                </div>
+            }
+            <div class="month-selector">
+                <button class="decrease-month" @onclick="DecreaseMonth">
+                    <svg width="20" height="20" viewBox="0 0 512 512" style="color:currentColor; transform: rotate(180deg);" xmlns="http://www.w3.org/2000/svg" class="h-full w-full"><rect width="512" height="512" x="0" y="0" rx="30" fill="transparent" stroke="transparent" stroke-width="0" stroke-opacity="100%" paint-order="stroke"></rect><svg width="256px" height="256px" viewBox="0 0 20 20" fill="currentColor" x="128" y="128" role="img" style="display:inline-block;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor"><path fill="currentColor" d="m6 15l5-5l-5-5l1-2l7 7l-7 7z" /></g></svg></svg>
+                </button>
+                <div class="month-indicator" @onclick="SelectMonthRange">@(new DateOnly(Year, Month, 1).ToString("MMMM, yyyy"))</div>
+                <button class="increase-month" @onclick="IncreaseMonth">
+                    <svg width="20" height="20" viewBox="0 0 512 512" style="color:currentColor" xmlns="http://www.w3.org/2000/svg" class="h-full w-full"><rect width="512" height="512" x="0" y="0" rx="30" fill="transparent" stroke="transparent" stroke-width="0" stroke-opacity="100%" paint-order="stroke"></rect><svg width="256px" height="256px" viewBox="0 0 20 20" fill="currentColor" x="128" y="128" role="img" style="display:inline-block;vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor"><path fill="currentColor" d="m6 15l5-5l-5-5l1-2l7 7l-7 7z" /></g></svg></svg>
+                </button>
+            </div>
+        </section>
+        <section class="days-of-week">
+            @{
+                var dayOfWeek = (int)CultureInfo.CurrentUICulture.DateTimeFormat.FirstDayOfWeek;
+                var daysRendered = 0;
+            }
+
+            <div class="week-head-header"></div>
+
+            @do
+            {
+                <div class="day-of-week">@CultureInfo.CurrentUICulture.DateTimeFormat.GetAbbreviatedDayName((DayOfWeek)dayOfWeek)</div>
+
+                dayOfWeek++;
+                if (dayOfWeek > 6)
+                {
+                    dayOfWeek = 0;
+                }
+                daysRendered++;
+            } while (daysRendered < 7);
+        </section>
+    </header>
+    <section class="calendar-body">
+        @if (_selectedMonth is not List<DateOnly?[]> selectedMonth)
+        {
+            <p>No month have been properly selected.</p>
+        }
+        else
+        {
+            foreach (var week in selectedMonth)
+            {
+                <section class="week-row">
+                    <div class="week-head" @onclick="async () => await SelectWeekRange(week.First(d => d is not null) ?? DateOnly.FromDateTime(DateTime.Now), week.Last(d => d is not null) ?? DateOnly.FromDateTime(DateTime.Now))"></div>
+                    @foreach (var day in week)
+                    {
+                        var isSelected = SelectedDateRange is (DateOnly from, DateOnly to) range && (day == range.from || day == range.to);
+                        var isRangeSelected = SelectedDateRange is (DateOnly rangeFrom, DateOnly rangeTo) dateRange && day > dateRange.from && day < dateRange.to;
+                        <div class="day @(day is null ? "disabled" : "") @(isSelected ? "selected" : "") @(isRangeSelected ? "range-selected" : "")"
+                             @onclick="async (args) => await SelectDate(day, args)">
+                            @if (day is not null)
+                            {
+                                <span class="day-number">@day?.Day</span>
+                            }
+                        </div>
+                    }
+                </section>
+            }
+        }
+    </section>
+</article>

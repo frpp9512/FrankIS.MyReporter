@@ -1,0 +1,12 @@
+﻿@page "/open-project"
+
+<h3>OpenProjectLinks</h3>
+
+@if (_loading)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <h3>@_response.Subject</h3>
+}

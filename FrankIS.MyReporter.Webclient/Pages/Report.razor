@@ -1,0 +1,63 @@
+﻿@page "/report"
+@using FrankIS.ClockifyManagement.Models
+
+<PageTitle>Report</PageTitle>
+
+<h1>Report time</h1>
+
+@if (_loading)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <article>
+        <FluentStack Orientation="Orientation.Horizontal" Wrap="true">
+            <div>
+                <FluentTextField Name="task-name"
+                                 @bind-Value="TaskName"
+                                 Label="Task name"
+                                 Required />
+            </div>
+            <div>
+                <FluentDatePicker Name="date-from"
+                                  @bind-Value="From"
+                                  Label="From" />
+            </div>
+            <div>
+                <FluentDatePicker Name="date-to"
+                                  @bind-Value="To"
+                                  Label="To" />
+            </div>
+            <div>
+                <FluentSelect name="project-id"
+                              Id="classification"
+                              @bind-Value="ProjectId"
+                              TOption="ClockifyProject"
+                              Items="_clockifyProjects"
+                              Required
+                              Label="Project"
+                              OptionValue="(p) => p.Id"
+                              OptionText="p => p.Name" />
+            </div>
+            <div style="display: block; height: 300px;">
+                <FluentSelect name="tags"
+                              Id="tags"
+                              @bind-SelectedOptions="SelectedTags"
+                              TOption="ClockifyTag"
+                              Items="_clockifyTags"
+                              Label="Tags"
+                              OptionValue="t => t.Id"
+                              OptionText="p => p.Name"
+                              Multiple Height="150" />
+            </div>
+            <div>
+                <FluentButton IconStart="@(new Icons.Regular.Size16.DocumentAdd())"
+                              Appearance="Appearance.Accent"
+                              OnClick="ReportTask">
+                    Report
+                </FluentButton>
+            </div>
+        </FluentStack>
+    </article>
+}

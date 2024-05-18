@@ -1,0 +1,9 @@
+﻿:root {
+    --primary-color: blue;
+    --primary-color-light: #6a6bff;
+    --primary-color-lighter: #cae7ff;
+    --secondary-color: white;
+    --primary-text-color: #2e2e2e;
+    --secondary-text-color: white;
+    --background: #cae7ff;
+}

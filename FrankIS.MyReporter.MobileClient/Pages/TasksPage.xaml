@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrankIS.MyReporter.MobileClient.Pages.TasksPage"
+             xmlns:viewmodel="clr-namespace:FrankIS.MyReporter.MobileClient.ViewModels"
+             x:DataType="viewmodel:TasksPageViewModel"
+             xmlns:model="clr-namespace:FrankIS.MyReporter.MobileClient.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="TasksPage"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                        Command="{Binding LoadTasksCommand}" />
+    </ContentPage.Behaviors>
+
+    <VerticalStackLayout Spacing="10" Padding="20,5">
+        <Label Text="Tasks"
+               Style="{StaticResource Headline}"
+               SemanticProperties.HeadingLevel="Level1" />
+        <StackLayout>
+            <Button Text="New Task" HorizontalOptions="Fill" />
+        </StackLayout>
+
+        <ActivityIndicator IsRunning="{Binding Loading}"
+                           IsVisible="{Binding Loading}" />
+
+        <CollectionView ItemsSource="{Binding ReportTasks}"
+                        IsVisible="{Binding DisplayTasks}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:ReportTask">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=RemoveTaskCommand}"
+                                           CommandParameter="{Binding .}">
+                                <Frame CornerRadius="5" 
+                                       Margin="3" 
+                                       VerticalOptions="CenterAndExpand" 
+                                       HorizontalOptions="CenterAndExpand" 
+                                       BackgroundColor="Red" 
+                                       Padding="0"
+                                       MinimumWidthRequest="60"
+                                       BorderColor="Transparent">
+                                    <StackLayout Padding="10" 
+                                                 HorizontalOptions="Center" 
+                                                 VerticalOptions="Center"
+                                                 BackgroundColor="Transparent">
+                                        <Image Source="task.png" HeightRequest="20" />
+                                    </StackLayout>
+                                </Frame>
+                            </SwipeItemView>
+                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=ReportTaskCommand}"
+                                           CommandParameter="{Binding .}">
+                                <Frame CornerRadius="5" 
+                                       Margin="3" 
+                                       VerticalOptions="CenterAndExpand" 
+                                       HorizontalOptions="CenterAndExpand" 
+                                       BackgroundColor="Green" 
+                                       Padding="0"
+                                       MinimumWidthRequest="60"
+                                       BorderColor="Transparent">
+                                    <StackLayout Padding="10" 
+                                                 HorizontalOptions="Center" 
+                                                 VerticalOptions="Center"
+                                                 BackgroundColor="Transparent">
+                                        <Image Source="task.png" HeightRequest="20" />
+                                    </StackLayout>
+                                </Frame>
+                            </SwipeItemView>
+                        </SwipeView.RightItems>
+
+                        <Frame CornerRadius="5">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Title}" />
+                                <Label Text="{Binding Description}" />
+                                <Label Text="{Binding Url}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout>
+                    <Label Text="No pending tasks to report" />
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="FrankIS.MyReporter.MobileClient.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:FrankIS.MyReporter.MobileClient"
+    xmlns:pages="clr-namespace:FrankIS.MyReporter.MobileClient.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Title="My Reporter">
+
+    <TabBar>
+        <ShellContent Title="Home"
+                      ContentTemplate="{DataTemplate local:MainPage}"
+                      Icon="home.png"
+                      Route="MainPage" />
+
+        <ShellContent Title="Tasks"
+                      ContentTemplate="{DataTemplate pages:TasksPage}"
+                      Icon="task.png"
+                      Route="TasksPage" />
+
+        <ShellContent Title="Report"
+                      ContentTemplate="{DataTemplate pages:ReportPage}"
+                      Icon="clock.png"
+                      Route="ReportPage" />
+        
+        <ShellContent Title="User"
+                      ContentTemplate="{DataTemplate pages:UserInfoPage}"
+                      Icon="idcard.png"
+                      Route="UserInfoPage"/>
+    </TabBar>
+</Shell>
