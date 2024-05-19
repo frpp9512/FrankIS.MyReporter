@@ -14,6 +14,11 @@
 
     <VerticalStackLayout VerticalOptions="FillAndExpand">
         <VerticalStackLayout>
+            <Label Text="Settings"
+                   Style="{StaticResource Headline}"
+                   SemanticProperties.HeadingLevel="Level1"
+                   Grid.Row="0"/>
+
             <Label Text="Clockify configuration"
                    VerticalOptions="Center" 
                    HorizontalOptions="Center" />

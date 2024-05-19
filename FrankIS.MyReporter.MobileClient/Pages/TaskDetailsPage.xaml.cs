@@ -2,9 +2,9 @@ using FrankIS.MyReporter.MobileClient.ViewModels;
 
 namespace FrankIS.MyReporter.MobileClient.Pages;
 
-public partial class UserInfoPage : ContentPage
+public partial class TaskDetailsPage : ContentPage
 {
-	public UserInfoPage(UserInfoPageViewModel viewModel)
+	public TaskDetailsPage(TaskDetailsPageViewModel viewModel)
 	{
 		InitializeComponent();
 		BindingContext = viewModel;

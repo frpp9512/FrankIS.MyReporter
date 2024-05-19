@@ -14,76 +14,90 @@
                                         Command="{Binding LoadTasksCommand}" />
     </ContentPage.Behaviors>
 
-    <VerticalStackLayout Spacing="10" Padding="20,5">
+    <Grid ColumnDefinitions="*"
+          RowDefinitions="Auto, Auto, Auto, *"
+          RowSpacing="10"
+          Padding="20,5">
         <Label Text="Tasks"
                Style="{StaticResource Headline}"
-               SemanticProperties.HeadingLevel="Level1" />
-        <StackLayout>
-            <Button Text="New Task" HorizontalOptions="Fill" />
+               SemanticProperties.HeadingLevel="Level1"
+               Grid.Row="0"/>
+        <StackLayout Grid.Row="1">
+            <Button Text="New Task"
+                    HorizontalOptions="Fill"
+                    Command="{Binding CreateTaskCommand}" />
         </StackLayout>
 
         <ActivityIndicator IsRunning="{Binding Loading}"
-                           IsVisible="{Binding Loading}" />
+                           IsVisible="{Binding Loading}"
+                           Grid.Row="2"/>
 
-        <CollectionView ItemsSource="{Binding ReportTasks}"
+        <ScrollView VerticalOptions="Fill"
+                    Padding="3"
+                    Grid.Row="3">
+            <CollectionView ItemsSource="{Binding ReportTasks}"
                         IsVisible="{Binding DisplayTasks}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="model:ReportTask">
-                    <SwipeView>
-                        <SwipeView.RightItems>
-                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=RemoveTaskCommand}"
-                                           CommandParameter="{Binding .}">
-                                <Frame CornerRadius="5" 
-                                       Margin="3" 
-                                       VerticalOptions="CenterAndExpand" 
-                                       HorizontalOptions="CenterAndExpand" 
-                                       BackgroundColor="Red" 
-                                       Padding="0"
-                                       MinimumWidthRequest="60"
-                                       BorderColor="Transparent">
-                                    <StackLayout Padding="10" 
-                                                 HorizontalOptions="Center" 
-                                                 VerticalOptions="Center"
-                                                 BackgroundColor="Transparent">
-                                        <Image Source="task.png" HeightRequest="20" />
-                                    </StackLayout>
-                                </Frame>
-                            </SwipeItemView>
-                            <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=ReportTaskCommand}"
-                                           CommandParameter="{Binding .}">
-                                <Frame CornerRadius="5" 
-                                       Margin="3" 
-                                       VerticalOptions="CenterAndExpand" 
-                                       HorizontalOptions="CenterAndExpand" 
-                                       BackgroundColor="Green" 
-                                       Padding="0"
-                                       MinimumWidthRequest="60"
-                                       BorderColor="Transparent">
-                                    <StackLayout Padding="10" 
-                                                 HorizontalOptions="Center" 
-                                                 VerticalOptions="Center"
-                                                 BackgroundColor="Transparent">
-                                        <Image Source="task.png" HeightRequest="20" />
-                                    </StackLayout>
-                                </Frame>
-                            </SwipeItemView>
-                        </SwipeView.RightItems>
-
-                        <Frame CornerRadius="5">
-                            <VerticalStackLayout>
-                                <Label Text="{Binding Title}" />
-                                <Label Text="{Binding Description}" />
-                                <Label Text="{Binding Url}" />
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:ReportTask">
+                        <Frame Style="{StaticResource TaskCard}"
+                               Padding="20,15"
+                               Margin="0,0,0,10">
+                            <VerticalStackLayout Padding="0">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=ShowTaskDetailsCommand}"
+                                                          CommandParameter="{Binding .}"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                
+                                <Label Text="{Binding Title}"
+                                   Style="{StaticResource TaskCardTitle}"/>
+                                <Label Text="{Binding Description}"
+                                   MaximumHeightRequest="100"
+                                   MaxLines="2"
+                                   LineBreakMode="TailTruncation"/>
+                                <Grid ColumnDefinitions="Auto,*"
+                                  ColumnSpacing="10"
+                                  Margin="0,15,0,0">
+                                    <Image Source="task.png"
+                                       WidthRequest="15"
+                                       Grid.Column="0" />
+                                    <Label Text="{Binding Url}"
+                                       Style="{StaticResource Link}"
+                                       Grid.Column="1">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=OpenLinkCommand}"
+                                                                  CommandParameter="{Binding Url}"/>
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,*,*"
+                                  Margin="0,15,0,0">
+                                    <Button 
+                                        Text="Report"
+                                        Grid.Column="0"
+                                        Style="{StaticResource TaskReportAction}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=ReportTaskCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                    <Button Text="Edit"
+                                        Grid.Column="1"
+                                        Style="{StaticResource TaskReportAction}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=EditTaskCommand}"
+                                        CommandParameter="{Binding .}" />
+                                    <Button Text="Delete"
+                                        Grid.Column="2"
+                                        Style="{StaticResource TaskReportAction}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TasksPageViewModel}}, Path=RemoveTaskCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid>
                             </VerticalStackLayout>
                         </Frame>
-                    </SwipeView>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-            <CollectionView.EmptyView>
-                <StackLayout>
-                    <Label Text="No pending tasks to report" />
-                </StackLayout>
-            </CollectionView.EmptyView>
-        </CollectionView>
-    </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <StackLayout>
+                        <Label Text="No pending tasks to report" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrankIS.MyReporter.MobileClient.Pages.TaskDetailsPage"
+             xmlns:viewmodel="clr-namespace:FrankIS.MyReporter.MobileClient.ViewModels"
+             x:DataType="viewmodel:TaskDetailsPageViewModel"
+             Title="TaskDetails"
+             Shell.NavBarIsVisible="False"
+             Shell.PresentationMode="ModalAnimated">
+    <ScrollView>
+        <Grid>
+            <VerticalStackLayout Spacing="25"
+                                 Padding="20,5"
+                                 VerticalOptions="FillAndExpand">
+                <Label Text="Task details"
+                       Style="{StaticResource Headline}"
+                       SemanticProperties.HeadingLevel="Level1"
+                       Grid.Row="0"/>
+
+                <VerticalStackLayout>
+                    <Label Text="Title" />
+                    <Label Text="{Binding Task.Title}" 
+                           FontSize="20" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout>
+                    <Label Text="Description" />
+                    <Label Text="{Binding Task.Description}" 
+                           FontSize="20" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout>
+                    <Label Text="URL" />
+                    <Label Text="{Binding Task.Url}"
+                           Style="{StaticResource Link}"
+                           FontSize="20">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenLinkCommand}"
+                                                  CommandParameter="{Binding Task.Url}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </VerticalStackLayout>
+
+                <Button Text="Back to Tasks"
+                        Command="{Binding ReturnToTasksCommand}" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

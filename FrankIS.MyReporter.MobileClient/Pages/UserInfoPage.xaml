@@ -2,11 +2,58 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrankIS.MyReporter.MobileClient.Pages.UserInfoPage"
-             Title="UserInfoPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="User Info"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+             xmlns:viewmodel="clr-namespace:FrankIS.MyReporter.MobileClient.ViewModels"
+             x:DataType="viewmodel:UserInfoPageViewModel"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="UserInfoPage"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing"
+                                        Command="{Binding LoadUserInfoCommand}" />
+    </ContentPage.Behaviors>
+
+    <VerticalStackLayout Padding="20,5"
+                         Spacing="25">
+        <Label Text="Clockify User Info"
+               Style="{StaticResource Headline}"
+               SemanticProperties.HeadingLevel="Level1"
+               Grid.Row="0"/>
+
+        <ActivityIndicator IsVisible="{Binding Loading}"
+                           IsRunning="{Binding Loading}" />
+
+        <VerticalStackLayout IsVisible="{Binding DisplayInfo}"
+                             Spacing="20">
+            <Frame CornerRadius="100" WidthRequest="150" HeightRequest="150">
+                <Image Source="{Binding UserInfo.ProfilePicture}"
+                       Aspect="AspectFit"
+                       WidthRequest="150" HeightRequest="150"/>
+            </Frame>
+
+            <StackLayout>
+                <Label Text="Name" />
+                <Label Text="{Binding UserInfo.Name}"
+                       FontSize="20"/>
+            </StackLayout>
+
+            <StackLayout>
+                <Label Text="Email" />
+                <Label Text="{Binding UserInfo.Email}"
+                       FontSize="20"/>
+            </StackLayout>
+
+            <StackLayout>
+                <Label Text="Status" />
+                <Label Text="{Binding UserInfo.Status}"
+                       FontSize="20"/>
+            </StackLayout>
+
+            <StackLayout>
+                <Label Text="Default Workspace" />
+                <Label Text="{Binding Workspace.Name}"
+           FontSize="20"/>
+            </StackLayout>
+        </VerticalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

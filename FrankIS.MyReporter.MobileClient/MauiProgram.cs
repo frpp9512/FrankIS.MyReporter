@@ -27,6 +27,15 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+        builder.Services.AddTransient<TaskDetailsPageViewModel>();
+        builder.Services.AddTransient<TaskDetailsPage>();
+
+        builder.Services.AddSingleton<UserInfoPageViewModel>();
+        builder.Services.AddSingleton<UserInfoPage>();
+
+        builder.Services.AddTransient<CreateOrEditPageViewModel>();
+        builder.Services.AddTransient<CreateOrEditTaskPage>();
+
         builder.Services.AddSingleton<TasksPageViewModel>();
         builder.Services.AddSingleton<TasksPage>();
 
