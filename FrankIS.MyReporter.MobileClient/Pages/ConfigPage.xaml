@@ -6,14 +6,17 @@
              xmlns:converters="clr-namespace:FrankIS.MyReporter.MobileClient.Converters"
              x:DataType="viewmodel:ConfigPageViewModel"
              Title="Configure"
-             Shell.PresentationMode="ModalAnimated">
+             Shell.PresentationMode="ModalAnimated"
+             Shell.NavBarIsVisible="False">
 
     <ContentPage.Resources>
         <converters:TimePickerTimeOnlyConverter x:Key="timeOnly" />
     </ContentPage.Resources>
 
-    <VerticalStackLayout VerticalOptions="FillAndExpand">
-        <VerticalStackLayout>
+    <VerticalStackLayout VerticalOptions="FillAndExpand"
+                         Padding="20,5"
+                         Spacing="20">
+        <VerticalStackLayout Spacing="15">
             <Label Text="Settings"
                    Style="{StaticResource Headline}"
                    SemanticProperties.HeadingLevel="Level1"
@@ -24,7 +27,25 @@
                    HorizontalOptions="Center" />
 
             <Entry Text="{Binding ClockifyBaseUrl}" />
-            <Entry Text="{Binding ClockifyApiKey}" />
+            <VerticalStackLayout>
+                <Entry Text="{Binding ClockifyApiKey}"
+                       Placeholder="Api Key Ex. woejfo89j23ofj2309fj0293f02j93fj230fj04j0f94f340f92903ru0239jrr0"/>
+                <HorizontalStackLayout Spacing="10"
+                                       HorizontalOptions="End">
+                    <Label Text="Go to Clockify"
+                           Style="{StaticResource Link}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToClockifyCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label Text="Copy link"
+                           Style="{StaticResource Link}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CopyClockifyLinkCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
 
             <Button Text="Load workspaces"
                     Command="{Binding LoadWorkspacesCommand}"/>
@@ -35,7 +56,8 @@
         </VerticalStackLayout>
 
         <VerticalStackLayout Margin="0, 40, 0, 0"
-                             IsVisible="{Binding DisplayReportConfig}">
+                             IsVisible="{Binding DisplayReportConfig}"
+                             Spacing="15">
             <Label Text="Reports configuration"
                    VerticalOptions="Center" 
                    HorizontalOptions="Center" />
@@ -61,12 +83,34 @@
         </VerticalStackLayout>
 
         <VerticalStackLayout>
+            <Label Text="OpenProject configuration"
+                   VerticalOptions="Center" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,25"/>
+            
             <Entry Text="{Binding OpenProjectBaseUrl}"
                    Placeholder="Open Project base url" />
-            <Entry Text="{Binding OpenProjectApiKey}"
+            <VerticalStackLayout>
+                <Entry Text="{Binding OpenProjectApiKey}"
                    Placeholder="Open Project api key" />
+                <HorizontalStackLayout Spacing="10"
+                                       HorizontalOptions="End">
+                    <Label Text="Go to OpenProject"
+                           Style="{StaticResource Link}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToOpenProjectCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label Text="Copy link"
+                           Style="{StaticResource Link}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CopyOpenProjectApiKeyUrlCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
         </VerticalStackLayout>
-        
+
         <VerticalStackLayout Margin="0, 40, 0, 0"
                              VerticalOptions="EndAndExpand">
             <Button Text="Save settings"

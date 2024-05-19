@@ -28,5 +28,10 @@
                       ContentTemplate="{DataTemplate pages:UserInfoPage}"
                       Icon="idcard.png"
                       Route="UserInfoPage"/>
+
+        <!--<ShellContent Title="Settings"
+                      ContentTemplate="{DataTemplate pages:ConfigPage}"
+                      Icon="gear.png"
+                      Route="ConfigPage"/>-->
     </TabBar>
 </Shell>

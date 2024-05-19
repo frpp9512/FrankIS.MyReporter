@@ -44,8 +44,15 @@
                     </Label>
                 </VerticalStackLayout>
 
+                <VerticalStackLayout>
+                    <Label Text="Created"
+                           Style="{StaticResource FieldLabel}" />
+                    <Label Text="{Binding Task.Created}" />
+                </VerticalStackLayout>
+                
                 <Button Text="Back to Tasks"
-                        Command="{Binding ReturnToTasksCommand}" />
+                        Command="{Binding ReturnToTasksCommand}"
+                        Style="{StaticResource Inverted}"/>
             </VerticalStackLayout>
         </Grid>
     </ScrollView>

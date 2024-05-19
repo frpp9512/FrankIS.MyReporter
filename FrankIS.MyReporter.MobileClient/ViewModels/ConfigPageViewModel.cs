@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FrankIS.ClockifyManagement.Configuration;
 using FrankIS.ClockifyManagement.Models;
@@ -101,5 +102,72 @@ public partial class ConfigPageViewModel : ObservableObject
         await ToastHelper.ShowShortToast($"Restart the application to the changes to take effect.");
         await Task.Delay(1000);
         Application.Current?.Quit();
+    }
+
+    [RelayCommand]
+    public async Task GoToClockifyAsync()
+    {
+        try
+        {
+            await Browser.Default.OpenAsync("https://app.clockify.me/user/preferences#advanced");
+        }
+        catch
+        {
+            await ToastHelper.ShowShortToast("Error while trying to navigate to Clockify.");
+            return;
+        }
+    }
+
+    [RelayCommand]
+    public async Task CopyClockifyLinkAsync()
+    {
+        await Clipboard.SetTextAsync("https://app.clockify.me/user/preferences#advanced");
+        await ToastHelper.ShowShortToast("The link to get the Clockify Api Key has been copied to the clipboard.");
+    }
+
+    [RelayCommand]
+    public async Task GoToOpenProjectAsync()
+    {
+        var url = await GetOpenProjectApiKeyUrl();
+        if (string.IsNullOrEmpty(url))
+        {
+            return;
+        }
+
+        await Browser.Default.OpenAsync(url);
+    }
+
+    [RelayCommand]
+    public async Task CopyOpenProjectApiKeyUrlAsync()
+    {
+        var url = await GetOpenProjectApiKeyUrl();
+        if (string.IsNullOrEmpty(url))
+        {
+            return;
+        }
+
+        await Clipboard.SetTextAsync(url);
+    }
+
+    private async Task<string?> GetOpenProjectApiKeyUrl()
+    {
+        if (string.IsNullOrEmpty(OpenProjectBaseUrl))
+        {
+            await ToastHelper.ShowShortToast("Must provide a valid OpenProject base url.");
+            return null;
+        }
+
+        try
+        {
+            var uri = new Uri(OpenProjectBaseUrl);
+            var authority = uri.Authority;
+            var scheme = uri.Scheme;
+            var apiKeyUrl = $"{scheme}://{authority}/my/access_token#api-token-section";
+            return apiKeyUrl;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
