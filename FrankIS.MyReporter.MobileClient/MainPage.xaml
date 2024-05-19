@@ -30,12 +30,14 @@
 
             <Grid ColumnDefinitions="*,*">
                 <VerticalStackLayout Grid.Column="0">
-                    <Label Text="Start date" />
+                    <Label Text="Start date"
+                           Style="{StaticResource FieldLabel}"/>
                     <DatePicker Date="{Binding From, Converter={StaticResource dateOnly}}" />
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Grid.Column="1">
-                    <Label Text="End date" />
+                    <Label Text="End date"
+                           Style="{StaticResource FieldLabel}"/>
                     <DatePicker Date="{Binding To, Converter={StaticResource dateOnly}}" />
                 </VerticalStackLayout>
             </Grid>

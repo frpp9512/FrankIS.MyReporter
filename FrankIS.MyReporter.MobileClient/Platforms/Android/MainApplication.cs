@@ -1,7 +1,9 @@
 ﻿using Android.App;
 using Android.Runtime;
+[assembly: UsesPermission(Android.Manifest.Permission.AccessNetworkState)]
 
 namespace FrankIS.MyReporter.MobileClient;
+
 [Application]
 public class MainApplication : MauiApplication
 {

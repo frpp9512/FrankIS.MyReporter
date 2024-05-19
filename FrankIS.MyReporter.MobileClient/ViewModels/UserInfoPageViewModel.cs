@@ -21,6 +21,11 @@ public partial class UserInfoPageViewModel(IClockifyManager clockifyManager) : O
         Loading = true;
         DisplayInfo = false;
 
+        if (!await ConnectivityHelpers.EnsureInternetAccess())
+        {
+            return;
+        }
+
         try
         {
             UserInfo = await _clockifyManager.GetUserInfoAsync();

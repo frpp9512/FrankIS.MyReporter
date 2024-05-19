@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FrankIS.MyReporter.MobileClient.Pages.NoNetworkPage"
+             Title="NoNetworkPage"
+             Shell.NavBarIsVisible="False"
+             Shell.PresentationMode="Modal"
+             Shell.BackgroundColor="{StaticResource Tertiary}">
+    <Grid RowDefinitions="*,Auto,Auto"
+          Padding="75"
+          RowSpacing="15">
+        <Image Source="no_network.png"
+               HorizontalOptions="FillAndExpand"
+               VerticalOptions="Center" />
+
+        <Button Text="Retry"
+                Grid.Row="1"
+                Clicked="Retry"/>
+
+        <Button Text="Go to Tasks"
+                Grid.Row="2"
+                Style="{StaticResource Inverted}"
+                Clicked="GoToTasks"/>
+    </Grid>
+</ContentPage>

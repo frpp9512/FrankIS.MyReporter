@@ -39,7 +39,7 @@ public partial class CreateOrEditPageViewModel(IOpenProjectManager openProjectMa
         {
             _ = await _repository.SaveItemAsync(Task);
             await ToastHelper.ShowShortToast($"Created task successfully.");
-            await Shell.Current.GoToAsync($"//{nameof(TasksPage)}");
+            await GoBackAsync();
             return;
         }
         catch
@@ -52,13 +52,33 @@ public partial class CreateOrEditPageViewModel(IOpenProjectManager openProjectMa
     }
 
     [RelayCommand]
+    private static async Task GoBackAsync()
+    {
+        await Shell.Current.GoToAsync($"//{nameof(TasksPage)}");
+    }
+
+    [RelayCommand]
     public async Task ImportFromOpenProjectAsync()
     {
+        if (!await ConnectivityHelpers.EnsureInternetAccess(false))
+        {
+            await ToastHelper.ShowShortToast($"Network connection needed for import task from OpenProject.");
+            return;
+        }
+
         Loading = true;
         DisplayForm = false;
         DisplaySaveButton = false;
 
         string url = await Shell.Current.DisplayPromptAsync("Import from OpenProject", "Insert the URL of the OpenProject task", "Import", "Cancel", "Ex. https://project.webavanx.com/projects/new-sites-bfa/work_packages/8296/relations");
+        if (string.IsNullOrEmpty(url))
+        {
+            Loading = false;
+            DisplayForm = true;
+            DisplaySaveButton = true;
+            return;
+        }
+
         if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
         {
             await ToastHelper.ShowShortToast("The provided url is invalid.");

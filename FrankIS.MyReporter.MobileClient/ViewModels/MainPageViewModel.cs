@@ -27,6 +27,13 @@ public partial class MainPageViewModel(ITaskReporter taskReporter) : ObservableO
         DisplayTaskSection = false;
         DisplaySummary = false;
 
+        if (!await ConnectivityHelpers.EnsureInternetAccess())
+        {
+            EnableButton = true;
+            LoadingReport = false;
+            return;
+        }
+
         if (!ApplicationConfig.IsConfigured)
         {
             await Shell.Current.GoToAsync(nameof(ConfigPage));

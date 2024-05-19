@@ -23,19 +23,23 @@
                            IsRunning="{Binding Loading}" />
 
         <VerticalStackLayout IsVisible="{Binding DisplayForm}" VerticalOptions="FillAndExpand">
-            <Label Text="Title" />
+            <Label Text="Title"
+                   Style="{StaticResource FieldLabel}" />
             <Entry Text="{Binding Task.Title}"
                    Placeholder="Ex. Add About dev button to the navbar..." />
 
 
             <Label Text="Description"
-                   Margin="0,20,0,0" />
+                   Margin="0,20,0,0"
+                   Style="{StaticResource FieldLabel}" />
             <Editor Text="{Binding Task.Description}"
                     Placeholder="Is needed to add a round button filled with secondary color ..."
-                    MinimumHeightRequest="100" />
+                    MinimumHeightRequest="100"
+                    MaximumHeightRequest="250" />
 
             <Label Text="Refrence URL"
-                   Margin="0,20,0,0" />
+                   Margin="0,20,0,0"
+                   Style="{StaticResource FieldLabel}"/>
             <Entry Text="{Binding Task.Url}"
                    Placeholder="URL"
                    Keyboard="Url" />
@@ -45,12 +49,16 @@
                 <Label Text="Is permanent" VerticalOptions="Center" />
             </HorizontalStackLayout>
         </VerticalStackLayout>
-        <StackLayout VerticalOptions="End">
+        <StackLayout VerticalOptions="End"
+                     Spacing="10">
             <ActivityIndicator IsVisible="{Binding IsSaving}"
                                IsRunning="{Binding IsSaving}" />
             <Button Text="Save changes"
                     Command="{Binding SaveChangesCommand}"
                     IsVisible="{Binding DisplaySaveButton}" />
+            <Button Text="Go Back"
+                    Style="{StaticResource Inverted}"
+                    Command="{Binding GoBackCommand}" />
         </StackLayout>
     </VerticalStackLayout>
 </ContentPage>

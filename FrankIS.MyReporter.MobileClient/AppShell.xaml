@@ -19,10 +19,10 @@
                       Icon="task.png"
                       Route="TasksPage" />
 
-        <ShellContent Title="Report"
+        <!--<ShellContent Title="Report"
                       ContentTemplate="{DataTemplate pages:ReportPage}"
                       Icon="clock.png"
-                      Route="ReportPage" />
+                      Route="ReportPage" />-->
         
         <ShellContent Title="User"
                       ContentTemplate="{DataTemplate pages:UserInfoPage}"

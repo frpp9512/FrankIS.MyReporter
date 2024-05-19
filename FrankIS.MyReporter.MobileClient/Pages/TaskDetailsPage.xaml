@@ -18,19 +18,22 @@
                        Grid.Row="0"/>
 
                 <VerticalStackLayout>
-                    <Label Text="Title" />
+                    <Label Text="Title"
+                           Style="{StaticResource FieldLabel}" />
                     <Label Text="{Binding Task.Title}" 
                            FontSize="20" />
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>
-                    <Label Text="Description" />
+                    <Label Text="Description"
+                           Style="{StaticResource FieldLabel}" />
                     <Label Text="{Binding Task.Description}" 
                            FontSize="20" />
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>
-                    <Label Text="URL" />
+                    <Label Text="URL"
+                           Style="{StaticResource FieldLabel}"/>
                     <Label Text="{Binding Task.Url}"
                            Style="{StaticResource Link}"
                            FontSize="20">
